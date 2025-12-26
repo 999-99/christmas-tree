@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Keep original global styles (applied alongside Tailwind) */
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: #05100a;
+}

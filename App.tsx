@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import ThreeScene from './components/ThreeScene';
 import UI from './components/UI';
 import { AppMode, GestureType } from './types';
@@ -7,12 +7,16 @@ import { DEFAULT_PHOTOS } from './constants';
 function App() {
   const [appMode, setAppMode] = useState<AppMode>(AppMode.TREE);
   const [currentGesture, setCurrentGesture] = useState<GestureType>(GestureType.NONE);
-  const [photos, setPhotos] = useState<string[]>(DEFAULT_PHOTOS);
+  const [photos, setPhotos] = useState<string[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Debounce logic could go here to prevent flickering states, 
   // but for a demo, direct setting feels more responsive.
-  
+
+  useEffect(() => {
+    setPhotos(DEFAULT_PHOTOS);
+  }, [])
+
   const handleGestureDetected = useCallback((gesture: GestureType) => {
     setCurrentGesture(gesture);
 
@@ -22,7 +26,7 @@ function App() {
       if (gesture === GestureType.FIST) {
         return AppMode.TREE;
       }
-      
+
       // 2. Open Hand -> Scatter (if not already scattered or focused)
       // If we are in FOCUS, Open Hand breaks focus back to scatter
       if (gesture === GestureType.OPEN_HAND) {
@@ -32,7 +36,7 @@ function App() {
       // 3. PINCH Logic moved to ThreeScene
       // We do NOT automatically switch to FOCUS here anymore.
       // ThreeScene will call setAppMode(FOCUS) only if a photo is actually grabbed.
-      
+
       return prevMode;
     });
   }, []);
@@ -52,17 +56,17 @@ function App() {
 
   return (
     <div className="relative w-full h-screen bg-[#05100a] overflow-hidden">
-      <ThreeScene 
-        photoUrls={photos} 
-        appMode={appMode} 
+      <ThreeScene
+        photoUrls={photos}
+        appMode={appMode}
         setAppMode={setAppMode}
         onGestureDetected={handleGestureDetected}
         videoRef={videoRef}
       />
-      <UI 
-        currentMode={appMode} 
-        currentGesture={currentGesture} 
-        onUpload={handleFileUpload} 
+      <UI
+        currentMode={appMode}
+        currentGesture={currentGesture}
+        onUpload={handleFileUpload}
         videoRef={videoRef}
       />
     </div>
